@@ -1,0 +1,190 @@
+* {
+}
+html {
+  //background: linear-gradient(rgba(255,255,255,0.5) url("https://i.pinimg.com/originals/1a/71/58/1a7158689e5ce37e5d78d97c332a003f.gif")
+  // background-image: url("https://i.pinimg.com/originals/1a/71/58/1a7158689e5ce37e5d78d97c332a003f.gif");
+  min-height: 100vh;
+  background-repeat: no-repeat;
+  background: linear-gradient(
+      rgba(255, 255, 255, 0.4),
+      rgba(255, 255, 255, 0.4)
+    ),
+    url("https://i.pinimg.com/originals/1a/71/58/1a7158689e5ce37e5d78d97c332a003f.gif")
+      no-repeat;
+  background-size: cover;
+  body {
+    background-color: transparent;
+  }
+}
+.container {
+  width: 70%;
+  margin: 0 auto;
+  header {
+    margin-top: 20px;
+    h1 {
+      text-align: center;
+    }
+  }
+  .countdown {
+    text-align: center;
+    font-size: 5rem;
+    margin: 10px 0;
+    // display: none;
+  }
+  .setting {
+    .setTime {
+      width: 80%;
+      text-align: center;
+      margin: 0 auto;
+      .configureTime {
+        display: flex;
+        // justify-content: center;
+        width: 100%;
+        justify-content: space-between;
+        .timeGroup {
+          display: flex;
+          flex-direction: column;
+          // margin: 0 10px;
+          width: 30%;
+          label {
+            font-size: 20px;
+          }
+          select {
+            width: 100%;
+            height: 30px;
+            border-radius: 5px;
+            border: 1px solid #000;
+          }
+        }
+      }
+      .recommendTime {
+        margin: 10px 0;
+        ul {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+          display: grid;
+          // grid-template-columns: auto auto auto;
+          grid-template-columns: 30% 30% 30%;
+
+          justify-content: space-between;
+          li {
+            cursor: pointer;
+            color: #001ba1;
+            font-weight: 500;
+          }
+        }
+      }
+    }
+    .rangeCoundown {
+      margin: 20px 0;
+      position: relative;
+      progress {
+        width: 60%;
+        margin: 0 auto;
+        display: flex;
+        font-size: 30px;
+        color: red;
+      }
+      .showPercentNumber {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60%;
+        text-align: center;
+        span {
+        }
+      }
+    }
+    .start__container {
+      margin-top: 30px;
+      text-align: center;
+      @mixin btnCountdown {
+        height: 40px;
+        border: 1px solid;
+        cursor: pointer;
+        font-weight: 600;
+        text-transform: uppercase;
+        &:active {
+          box-shadow: 0px 2px 9px 5px #000000;
+        }
+      }
+      .startBtn {
+        @include btnCountdown();
+        // background-color: #58d440;
+        border-color: rgb(34, 193, 195);
+        background: rgb(34, 193, 195);
+        background: linear-gradient(
+          243deg,
+          rgba(34, 193, 195, 1) 0%,
+          rgba(91, 196, 28, 1) 100%
+        );
+        width: 80%;
+      }
+      .btnCountdown__container {
+        width: 80%;
+        justify-content: space-between;
+        margin: 0 auto;
+        display: flex;
+        button {
+          @include btnCountdown();
+          width: 30%;
+          color: #fff;
+        }
+
+        .stopBtn {
+          background-color: #ff1919;
+          border-color: #ff1919;
+        }
+        .pauseBtn {
+          background-color: #e6e600;
+          border-color: #e6e600;
+        }
+        .continueBtn {
+          background-color: #e67300;
+          border-color: #e67300;
+        }
+        .restartBtn {
+          background-color: #0026e6;
+          border-color: #0026e6;
+        }
+      }
+    }
+  }
+}
+/* SMAILL DEVICE (SMARTPHONES) : 320 < width < 479  */
+@media only screen and (min-width: 20em) and (max-width: 29.9375em) {
+  .countdown {
+    font-size: 3rem !important;
+  }
+}
+// Mobil: width < 740px
+@media only screen and (max-width: 46.1875em) {
+  .container {
+    width: 90%;
+    .countdown {
+      font-size: 3.5em;
+    }
+    .setting {
+      .setTime {
+        width: 100%;
+        .configureTime {
+          .timeGroup {
+            label {
+              font-size: 15px;
+            }
+          }
+        }
+      }
+    }
+    .start__container {
+      button {
+        width: 100% !important;
+      }
+    }
+  }
+}
+// Tablet: width >= 740px and width < 1024px
+@media only screen and (min-width: 46.1875em) and (max-width: 63.9375em) {
+}

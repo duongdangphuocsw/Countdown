@@ -1,124 +1,361 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-
-const inter = Inter({ subsets: ['latin'] })
-
-export default function Home() {
+import Image from "next/image";
+import { Inter } from "next/font/google";
+import Link from "next/link";
+import App from "./_app";
+import moment, { Duration } from "moment";
+import { useState, useEffect, useRef } from "react";
+import { setInterval } from "timers/promises";
+import { edgeServerPages } from "next/dist/build/webpack/plugins/pages-manifest-plugin";
+import { StringLiteral } from "typescript";
+const inter = Inter({ subsets: ["latin"] });
+export default function Countdown() {
+  const [countdownTime, setCountdownTime] = useState<number>(0);
+  const [inputHour, setinputHour] = useState<number>(0);
+  const [inputMin, setinputMin] = useState<number>(0);
+  const [isEndtime, setisEndtime] = useState<boolean>(false);
+  const [inputSec, setinputSec] = useState<number>(0);
+  const [isCountdown, setisCountdown] = useState<any>(false);
+  const [isPause, setisPause] = useState<boolean>(false);
+  const timerId = useRef<number | null>(null);
+  const [percent, setPercent] = useState<number>(0);
+  interface recommend {
+    value: number,
+    type: string
+  }
+  const [listRecommend, setlistRecommend] = useState<recommend[]>(
+    [
+      {value: 15, type: "second"},
+      {value: 20, type: "second"},
+      {value: 30, type: "second"},
+      {value: 45, type: "second"},
+      {value: 1, type: "minute"},
+      {value: 2, type: "minute"},
+      {value: 5, type: "minute"},
+      {value: 30, type: "minute"},
+      {value: 45, type: "minute"},
+    ]
+  );
+  useEffect(() => {
+    const totalTime = inputSec + inputMin * 60 + inputHour * 3600;
+    if (totalTime > 0) {
+      setPercent(Math.floor(((totalTime - countdownTime) / totalTime) * 100));
+    }
+    if (countdownTime <= 0 && timerId.current) {
+      window.clearInterval(timerId.current);
+      // setisCountdown(false);
+      setisEndtime(true);
+    }
+  }, [countdownTime]);
+  const handleStartCountdown = () => {
+    const totalTime = inputSec + inputMin * 60 + inputHour * 3600;
+    setCountdownTime(totalTime);
+    if (totalTime > 0) {
+      timerId.current = window.setInterval(() => {
+        setCountdownTime((prev) => prev - 1);
+      }, 1000);
+      setisCountdown(true);
+      setisEndtime(false);
+      // setisPause(false)
+    }
+    setisCountdown(totalTime > 0 ? true : false);
+  };
+  const handlePause = () => {
+    // setisCountdown(false);
+    setisPause(true);
+    if (timerId.current) window.clearInterval(timerId.current);
+  };
+  const handleContinue = () => {
+    setisPause(false);
+    timerId.current = window.setInterval(() => {
+      setCountdownTime((prev) => prev - 1);
+    }, 1000);
+  };
+  const handleRestart = () => {
+    const totalTime = inputSec + inputMin * 60 + inputHour * 3600;    
+    setCountdownTime(totalTime);
+    // setisPause(false)
+    if (countdownTime === 0 || isPause) {
+      setisPause(prev => prev ? false : true)
+      timerId.current = window.setInterval(() => {
+        setCountdownTime((prev) => prev - 1);
+      }, 1000);
+      setisEndtime(false);
+    }
+  };
+  const handleStopCountdown = () => {
+    setCountdownTime(0);
+    if (timerId.current) window.clearInterval(timerId.current);
+    setisCountdown(false);
+    setisPause(false)
+  };
+  const formatTime = (time: number) => {
+    if (time > 0) {
+      let hours: any = Math.floor(time / 3600);
+      let minutes: any = Math.floor((time - hours * 3600) / 60);
+      let seconds: any = time - hours * 3600 - minutes * 60;
+      if (hours < 10) hours = "0" + hours;
+      if (minutes < 10) minutes = "0" + minutes;
+      if (seconds < 10) seconds = "0" + seconds;
+      return hours + " : " + minutes + " : " + seconds;
+    }
+    return "00 : 00 : 00";
+  };
+  const handleSelectRecommend = (value : number , type:string) => {
+    console.log(123);
+    setCountdownTime(type==="second" ? value : value * 60)
+    console.log(countdownTime);
+    timerId.current = window.setInterval(() => {
+      setCountdownTime((prev) => prev - 1);
+    }, 1000);
+    setisCountdown(true);
+    setisEndtime(false);
+  }
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <div className="container">
+      <header>
+        <h1 className="text-4xl my-10 font-extrabold font-serif">
+          Time countdown
+        </h1>
+      </header>
+      <div className="countdown">
+        {isCountdown ? (
+          <p>{formatTime(countdownTime)}</p>
+        ) : (
+          <p>
+            <span>{inputHour < 10 ? "0" + inputHour : inputHour}</span> :{" "}
+            <span>{inputMin < 10 ? "0" + inputMin : inputMin}</span> :{" "}
+            <span>{inputSec < 10 ? "0" + inputSec : inputSec}</span>
+          </p>
+        )}
+      </div>
+      <div className="setting">
+        <div
+          className="setTime"
+          style={{ display: isCountdown ? "none" : "block" }}
+        >
+          <div className="configureTime">
+            <div className="timeGroup setHour">
+              <label htmlFor="">Set hour</label>
+              <select onChange={(e) => setinputHour(parseInt(e.target.value))}>
+                <option value={0}>00</option>
+                <option value={1}>01</option>
+                <option value={2}>02</option>
+                <option value={3}>03</option>
+                <option value={4}>04</option>
+                <option value={5}>05</option>
+                <option value={6}>06</option>
+                <option value={7}>07</option>
+                <option value={8}>08</option>
+                <option value={9}>09</option>
+                <option value={10}>10</option>
+                <option value={11}>11</option>
+                <option value={12}>12</option>
+                <option value={13}>13</option>
+                <option value={14}>14</option>
+                <option value={15}>15</option>
+                <option value={16}>16</option>
+                <option value={17}>17</option>
+                <option value={18}>18</option>
+                <option value={19}>19</option>
+                <option value={20}>20</option>
+                <option value={21}>21</option>
+                <option value={22}>22</option>
+                <option value={23}>23</option>
+              </select>
+            </div>
+            <div className="timeGroup ">
+              <label htmlFor="">Set minute</label>
+              <select onChange={(e) => setinputMin(parseInt(e.target.value))}>
+                <option value={0}>00</option>
+                <option value={1}>01</option>
+                <option value={2}>02</option>
+                <option value={3}>03</option>
+                <option value={4}>04</option>
+                <option value={5}>05</option>
+                <option value={6}>06</option>
+                <option value={7}>07</option>
+                <option value={8}>08</option>
+                <option value={9}>09</option>
+                <option value={10}>10</option>
+                <option value={11}>11</option>
+                <option value={12}>12</option>
+                <option value={13}>13</option>
+                <option value={14}>14</option>
+                <option value={15}>15</option>
+                <option value={16}>16</option>
+                <option value={17}>17</option>
+                <option value={18}>18</option>
+                <option value={19}>19</option>
+                <option value={20}>20</option>
+                <option value={21}>21</option>
+                <option value={22}>22</option>
+                <option value={23}>23</option>
+                <option value={24}>24</option>
+                <option value={25}>25</option>
+                <option value={26}>26</option>
+                <option value={27}>27</option>
+                <option value={28}>28</option>
+                <option value={29}>29</option>
+                <option value={30}>30</option>
+                <option value={31}>31</option>
+                <option value={32}>32</option>
+                <option value={33}>33</option>
+                <option value={34}>34</option>
+                <option value={35}>35</option>
+                <option value={36}>36</option>
+                <option value={37}>37</option>
+                <option value={38}>38</option>
+                <option value={39}>39</option>
+                <option value={40}>40</option>
+                <option value={41}>41</option>
+                <option value={42}>42</option>
+                <option value={43}>43</option>
+                <option value={44}>44</option>
+                <option value={45}>45</option>
+                <option value={46}>46</option>
+                <option value={47}>47</option>
+                <option value={48}>48</option>
+                <option value={49}>49</option>
+                <option value={50}>50</option>
+                <option value={51}>51</option>
+                <option value={52}>52</option>
+                <option value={53}>53</option>
+                <option value={54}>54</option>
+                <option value={55}>55</option>
+                <option value={56}>56</option>
+                <option value={57}>57</option>
+                <option value={58}>58</option>
+                <option value={59}>59</option>
+              </select>
+            </div>
+            <div className="timeGroup ">
+              <label htmlFor="">Set second</label>
+              <select onChange={(e) => setinputSec(parseInt(e.target.value))}>
+                <option value={0}>00</option>
+
+                <option value={1}>01</option>
+                <option value={2}>02</option>
+                <option value={3}>03</option>
+                <option value={4}>04</option>
+                <option value={5}>05</option>
+                <option value={6}>06</option>
+                <option value={7}>07</option>
+                <option value={8}>08</option>
+                <option value={9}>09</option>
+                <option value={10}>10</option>
+                <option value={11}>11</option>
+                <option value={12}>12</option>
+                <option value={13}>13</option>
+                <option value={14}>14</option>
+                <option value={15}>15</option>
+                <option value={16}>16</option>
+                <option value={17}>17</option>
+                <option value={18}>18</option>
+                <option value={19}>19</option>
+                <option value={20}>20</option>
+                <option value={21}>21</option>
+                <option value={22}>22</option>
+                <option value={23}>23</option>
+                <option value={24}>24</option>
+                <option value={25}>25</option>
+                <option value={26}>26</option>
+                <option value={27}>27</option>
+                <option value={28}>28</option>
+                <option value={29}>29</option>
+                <option value={30}>30</option>
+                <option value={31}>31</option>
+                <option value={32}>32</option>
+                <option value={33}>33</option>
+                <option value={34}>34</option>
+                <option value={35}>35</option>
+                <option value={36}>36</option>
+                <option value={37}>37</option>
+                <option value={38}>38</option>
+                <option value={39}>39</option>
+                <option value={40}>40</option>
+                <option value={41}>41</option>
+                <option value={42}>42</option>
+                <option value={43}>43</option>
+                <option value={44}>44</option>
+                <option value={45}>45</option>
+                <option value={46}>46</option>
+                <option value={47}>47</option>
+                <option value={48}>48</option>
+                <option value={49}>49</option>
+                <option value={50}>50</option>
+                <option value={51}>51</option>
+                <option value={52}>52</option>
+                <option value={53}>53</option>
+                <option value={54}>54</option>
+                <option value={55}>55</option>
+                <option value={56}>56</option>
+                <option value={57}>57</option>
+                <option value={58}>58</option>
+                <option value={59}>59</option>
+              </select>
+            </div>
+          </div>{" "}
+          <div className="recommendTime" >
+           <ul>
+            {listRecommend && listRecommend.length > 0 && listRecommend.map((item, index) => (
+              <li key={index}
+              onClick = {()=> handleSelectRecommend(item.value, item.type)}
+              >{item.value} {item.type === "second" ? "Sec": "Min"}
+              </li>
+            ))}
+           </ul>
+          </div>
+        </div>
+        <div className="setSound"></div>
+        <div className="setNameClock"></div>
+        <div
+          className="rangeCoundown"
+          style={{ display: isCountdown ? "block" : "none" }}
+        >
+          <progress id="file" value={percent} max="100"></progress>
+          <div className="showPercentNumber">
+            <span>{percent}%</span>
+          </div>
+        </div>
+        <div className="start__container">
+          {isCountdown ? (
+            <div className="btnCountdown__container">
+              {isPause ? (
+                <button
+                  className="continueBtn"
+                  onClick={() => handleContinue()}
+                  style={{ display: isEndtime ? "none" : "block" }}
+                >
+                  Continue
+                </button>
+              ) : (
+                <button
+                  className="pauseBtn"
+                  onClick={() => handlePause()}
+                  style={{ display: isEndtime ? "none" : "block" }}
+                >
+                  Pause
+                </button>
+              )}
+
+              <button
+                className="restartBtn"
+                onClick={() => handleRestart()}
+                style={{ width: isEndtime ? "65%" : "30%" }}
+              >
+                Restart
+              </button>
+              <button onClick={() => handleStopCountdown()} className="stopBtn">
+                Stop
+              </button>
+            </div>
+          ) : (
+            <button onClick={() => handleStartCountdown()} className="startBtn">
+              Start Countdown
+            </button>
+          )}
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`${inter.className} mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p
-            className={`${inter.className} m-0 max-w-[30ch] text-sm opacity-50`}
-          >
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
