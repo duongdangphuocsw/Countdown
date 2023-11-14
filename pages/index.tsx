@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { Inter } from "next/font/google";
 import Link from "next/link";
 import App from "./_app";
 import moment, { Duration } from "moment";
@@ -7,7 +6,6 @@ import { useState, useEffect, useRef } from "react";
 import { setInterval } from "timers/promises";
 import { edgeServerPages } from "next/dist/build/webpack/plugins/pages-manifest-plugin";
 import { StringLiteral } from "typescript";
-const inter = Inter({ subsets: ["latin"] });
 export default function Countdown() {
   const [countdownTime, setCountdownTime] = useState<number>(0);
   const [inputHour, setinputHour] = useState<number>(0);
@@ -19,22 +17,20 @@ export default function Countdown() {
   const timerId = useRef<number | null>(null);
   const [percent, setPercent] = useState<number>(0);
   interface recommend {
-    value: number,
-    type: string
+    value: number;
+    type: string;
   }
-  const [listRecommend, setlistRecommend] = useState<recommend[]>(
-    [
-      {value: 15, type: "second"},
-      {value: 20, type: "second"},
-      {value: 30, type: "second"},
-      {value: 45, type: "second"},
-      {value: 1, type: "minute"},
-      {value: 2, type: "minute"},
-      {value: 5, type: "minute"},
-      {value: 30, type: "minute"},
-      {value: 45, type: "minute"},
-    ]
-  );
+  const [listRecommend, setlistRecommend] = useState<recommend[]>([
+    { value: 15, type: "second" },
+    { value: 20, type: "second" },
+    { value: 30, type: "second" },
+    { value: 45, type: "second" },
+    { value: 1, type: "minute" },
+    { value: 2, type: "minute" },
+    { value: 5, type: "minute" },
+    { value: 30, type: "minute" },
+    { value: 45, type: "minute" },
+  ]);
   useEffect(() => {
     const totalTime = inputSec + inputMin * 60 + inputHour * 3600;
     if (totalTime > 0) {
@@ -71,11 +67,11 @@ export default function Countdown() {
     }, 1000);
   };
   const handleRestart = () => {
-    const totalTime = inputSec + inputMin * 60 + inputHour * 3600;    
+    const totalTime = inputSec + inputMin * 60 + inputHour * 3600;
     setCountdownTime(totalTime);
     // setisPause(false)
     if (countdownTime === 0 || isPause) {
-      setisPause(prev => prev ? false : true)
+      setisPause((prev) => (prev ? false : true));
       timerId.current = window.setInterval(() => {
         setCountdownTime((prev) => prev - 1);
       }, 1000);
@@ -86,7 +82,7 @@ export default function Countdown() {
     setCountdownTime(0);
     if (timerId.current) window.clearInterval(timerId.current);
     setisCountdown(false);
-    setisPause(false)
+    setisPause(false);
   };
   const formatTime = (time: number) => {
     if (time > 0) {
@@ -100,16 +96,16 @@ export default function Countdown() {
     }
     return "00 : 00 : 00";
   };
-  const handleSelectRecommend = (value : number , type:string) => {
+  const handleSelectRecommend = (value: number, type: string) => {
     console.log(123);
-    setCountdownTime(type==="second" ? value : value * 60)
+    setCountdownTime(type === "second" ? value : value * 60);
     console.log(countdownTime);
     timerId.current = window.setInterval(() => {
       setCountdownTime((prev) => prev - 1);
     }, 1000);
     setisCountdown(true);
     setisEndtime(false);
-  }
+  };
   return (
     <div className="container">
       <header>
@@ -295,15 +291,19 @@ export default function Countdown() {
               </select>
             </div>
           </div>{" "}
-          <div className="recommendTime" >
-           <ul>
-            {listRecommend && listRecommend.length > 0 && listRecommend.map((item, index) => (
-              <li key={index}
-              onClick = {()=> handleSelectRecommend(item.value, item.type)}
-              >{item.value} {item.type === "second" ? "Sec": "Min"}
-              </li>
-            ))}
-           </ul>
+          <div className="recommendTime">
+            <ul>
+              {listRecommend &&
+                listRecommend.length > 0 &&
+                listRecommend.map((item, index) => (
+                  <li
+                    key={index}
+                    onClick={() => handleSelectRecommend(item.value, item.type)}
+                  >
+                    {item.value} {item.type === "second" ? "Sec" : "Min"}
+                  </li>
+                ))}
+            </ul>
           </div>
         </div>
         <div className="setSound"></div>
