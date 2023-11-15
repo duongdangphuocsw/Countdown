@@ -144,8 +144,8 @@ export default function Countdown() {
               <label htmlFor="">Set hour</label>
               <select onChange={(e) => setinputHour(parseInt(e.target.value))}>
                 {Array.from({ length: 24 }, (_, index) => index).map(
-                  (value: number) => (
-                    <option value={value}>
+                  (value: number, index: number) => (
+                    <option value={value} key={index}>
                       {value < 10 ? `0${value}` : value}{" "}
                     </option>
                   )
@@ -156,8 +156,8 @@ export default function Countdown() {
               <label htmlFor="">Set minute</label>
               <select onChange={(e) => setinputMin(parseInt(e.target.value))}>
                 {Array.from({ length: 60 }, (_, index) => index).map(
-                  (value: number) => (
-                    <option value={value}>
+                  (value: number, index: number) => (
+                    <option value={value} key={index}>
                       {value < 10 ? `0${value}` : value}{" "}
                     </option>
                   )
@@ -168,8 +168,8 @@ export default function Countdown() {
               <label htmlFor="">Set second</label>
               <select onChange={(e) => setinputSec(parseInt(e.target.value))}>
                 {Array.from({ length: 60 }, (_, index) => index).map(
-                  (value: number) => (
-                    <option value={value}>
+                  (value: number, index: number) => (
+                    <option value={value} key={index}>
                       {value < 10 ? `0${value}` : value}{" "}
                     </option>
                   )
