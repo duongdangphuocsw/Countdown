@@ -6,6 +6,10 @@ import { useState, useEffect, useRef } from "react";
 import { setInterval } from "timers/promises";
 import { edgeServerPages } from "next/dist/build/webpack/plugins/pages-manifest-plugin";
 import { StringLiteral } from "typescript";
+interface recommend {
+  value: number;
+  type: string;
+}
 export default function Countdown() {
   const [countdownTime, setCountdownTime] = useState<number>(0);
   const [inputHour, setinputHour] = useState<number>(0);
@@ -16,10 +20,8 @@ export default function Countdown() {
   const [isPause, setisPause] = useState<boolean>(false);
   const timerId = useRef<number | null>(null);
   const [percent, setPercent] = useState<number>(0);
-  interface recommend {
-    value: number;
-    type: string;
-  }
+  const [totalCountdownTime, setTotalCountdownTime] = useState<number>(0);
+
   const [listRecommend, setlistRecommend] = useState<recommend[]>([
     { value: 15, type: "second" },
     { value: 20, type: "second" },
@@ -31,10 +33,14 @@ export default function Countdown() {
     { value: 30, type: "minute" },
     { value: 45, type: "minute" },
   ]);
+
   useEffect(() => {
-    const totalTime = inputSec + inputMin * 60 + inputHour * 3600;
-    if (totalTime > 0) {
-      setPercent(Math.floor(((totalTime - countdownTime) / totalTime) * 100));
+    if (totalCountdownTime > 0) {
+      setPercent(
+        Math.floor(
+          ((totalCountdownTime - countdownTime) / totalCountdownTime) * 100
+        )
+      );
     }
     if (countdownTime <= 0 && timerId.current) {
       window.clearInterval(timerId.current);
@@ -42,34 +48,38 @@ export default function Countdown() {
       setisEndtime(true);
     }
   }, [countdownTime]);
-  const handleStartCountdown = () => {
-    const totalTime = inputSec + inputMin * 60 + inputHour * 3600;
-    setCountdownTime(totalTime);
+
+  const handleCountdown = (totalTime: number) => {
     if (totalTime > 0) {
       timerId.current = window.setInterval(() => {
         setCountdownTime((prev) => prev - 1);
       }, 1000);
       setisCountdown(true);
       setisEndtime(false);
-      // setisPause(false)
     }
+  };
+  const handleStartCountdown = () => {
+    const totalTime = inputSec + inputMin * 60 + inputHour * 3600;
+    setTotalCountdownTime(totalTime);
+    setCountdownTime(totalTime);
+    handleCountdown(totalTime);
     setisCountdown(totalTime > 0 ? true : false);
   };
+
   const handlePause = () => {
-    // setisCountdown(false);
     setisPause(true);
     if (timerId.current) window.clearInterval(timerId.current);
   };
+
   const handleContinue = () => {
     setisPause(false);
     timerId.current = window.setInterval(() => {
       setCountdownTime((prev) => prev - 1);
     }, 1000);
   };
+
   const handleRestart = () => {
-    const totalTime = inputSec + inputMin * 60 + inputHour * 3600;
-    setCountdownTime(totalTime);
-    // setisPause(false)
+    setCountdownTime(totalCountdownTime);
     if (countdownTime === 0 || isPause) {
       setisPause((prev) => (prev ? false : true));
       timerId.current = window.setInterval(() => {
@@ -78,12 +88,14 @@ export default function Countdown() {
       setisEndtime(false);
     }
   };
+
   const handleStopCountdown = () => {
     setCountdownTime(0);
     if (timerId.current) window.clearInterval(timerId.current);
     setisCountdown(false);
     setisPause(false);
   };
+
   const formatTime = (time: number) => {
     if (time > 0) {
       let hours: any = Math.floor(time / 3600);
@@ -96,16 +108,14 @@ export default function Countdown() {
     }
     return "00 : 00 : 00";
   };
+
   const handleSelectRecommend = (value: number, type: string) => {
-    console.log(123);
-    setCountdownTime(type === "second" ? value : value * 60);
-    console.log(countdownTime);
-    timerId.current = window.setInterval(() => {
-      setCountdownTime((prev) => prev - 1);
-    }, 1000);
-    setisCountdown(true);
-    setisEndtime(false);
+    const totalTime = type === "second" ? value : value * 60;
+    setTotalCountdownTime(totalTime);
+    setCountdownTime(totalTime);
+    handleCountdown(totalTime);
   };
+
   return (
     <div className="container">
       <header>
@@ -228,7 +238,6 @@ export default function Countdown() {
               <label htmlFor="">Set second</label>
               <select onChange={(e) => setinputSec(parseInt(e.target.value))}>
                 <option value={0}>00</option>
-
                 <option value={1}>01</option>
                 <option value={2}>02</option>
                 <option value={3}>03</option>
