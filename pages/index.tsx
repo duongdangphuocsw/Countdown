@@ -51,7 +51,10 @@ export default function Countdown() {
       window.clearInterval(timerId.current);
       // setisCountdown(false);
       setisEndtime(true);
-      play();
+      // play();
+      if (isCountdown) {
+        play();
+      }
     }
   }, [countdownTime]);
 
@@ -97,11 +100,11 @@ export default function Countdown() {
   };
 
   const handleStopCountdown = () => {
-    setCountdownTime(0);
-    if (timerId.current) window.clearInterval(timerId.current);
     setisCountdown(false);
-    setisPause(false);
+    setCountdownTime(0);
     stop();
+    if (timerId.current) window.clearInterval(timerId.current);
+    setisPause(false);
   };
 
   const formatTime = (time: number) => {
