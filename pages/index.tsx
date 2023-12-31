@@ -2,10 +2,11 @@ import Image from "next/image";
 import Link from "next/link";
 import App from "./_app";
 import moment, { Duration } from "moment";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { setInterval } from "timers/promises";
 import { edgeServerPages } from "next/dist/build/webpack/plugins/pages-manifest-plugin";
 import { StringLiteral } from "typescript";
+import useSound from "use-sound";
 interface recommend {
   value: number;
   type: string;
@@ -21,7 +22,11 @@ export default function Countdown() {
   const timerId = useRef<number | null>(null);
   const [percent, setPercent] = useState<number>(0);
   const [totalCountdownTime, setTotalCountdownTime] = useState<number>(0);
-
+  const [play, { stop }] = useSound(
+    "/songs/smartphone_vibrating_alarm_silent-7040.mp3"
+  );
+  const [isNotificationEndtime, setIsNotificationEndtime] =
+    useState<boolean>(false);
   const [listRecommend, setlistRecommend] = useState<recommend[]>([
     { value: 15, type: "second" },
     { value: 20, type: "second" },
@@ -46,6 +51,7 @@ export default function Countdown() {
       window.clearInterval(timerId.current);
       // setisCountdown(false);
       setisEndtime(true);
+      play();
     }
   }, [countdownTime]);
 
@@ -87,6 +93,7 @@ export default function Countdown() {
       }, 1000);
       setisEndtime(false);
     }
+    stop();
   };
 
   const handleStopCountdown = () => {
@@ -94,6 +101,7 @@ export default function Countdown() {
     if (timerId.current) window.clearInterval(timerId.current);
     setisCountdown(false);
     setisPause(false);
+    stop();
   };
 
   const formatTime = (time: number) => {
