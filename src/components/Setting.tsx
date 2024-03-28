@@ -5,7 +5,7 @@ interface SettingProps {
 export default function Setting({ className }: SettingProps) {
   return (
     <div className={`${className ? className : ""} absolute top-0`}>
-      <IoSettingsOutline className="text-2xl" />
+      {/* <IoSettingsOutline className="text-2xl" /> */}
     </div>
   );
 }
