@@ -6,6 +6,7 @@ import { useState, useEffect, useRef, useSyncExternalStore } from "react";
 import { setInterval } from "timers/promises";
 import { edgeServerPages } from "next/dist/build/webpack/plugins/pages-manifest-plugin";
 import { StringLiteral } from "typescript";
+import Setting from "~/components/Setting";
 import useSound from "use-sound";
 interface recommend {
   value: number;
@@ -252,6 +253,7 @@ export default function Countdown() {
             </button>
           )}
         </div>
+        <Setting className="text-2xl" />
       </div>
     </div>
   );
