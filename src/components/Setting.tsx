@@ -2,7 +2,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 interface SettingProps {
   className?: string;
 }
-export default function ({ className }: SettingProps) {
+export default function Setting({ className }: SettingProps) {
   return (
     <div className={`${className ? className : ""} absolute top-0`}>
       <IoSettingsOutline className="text-2xl" />
