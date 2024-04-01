@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-
+import { formatedTime } from "~/helpers";
+import ShowTime from "~/components/ShowTime";
 const Page = () => {
   const [startTime, setStartTime] = useState<any>(null);
   const [now, setNow] = useState<any>(null);
@@ -20,34 +21,42 @@ const Page = () => {
     clearInterval(intervalRef.current);
     setStopTime(secondsPassed);
   }
+
   const handleReset = () => {
     setStopTime(0);
     setStartTime(Date.now());
     setNow(Date.now());
   };
+
   let secondsPassed = 0;
   if (startTime != null && now != null) {
-    secondsPassed = (now - startTime) / 1000;
-    secondsPassed += stopTime;
+    secondsPassed = now - startTime;
+    // secondsPassed += stopTime;
   }
+
+  const { hours, minutes, seconds, milliseconds } = formatedTime(secondsPassed);
   return (
-    <div>
-      {" "}
-      <h1>Time passed: {secondsPassed.toFixed(3)}</h1>
-      <button onClick={handleReset} disabled={!isStop}>
-        Reset
-      </button>
-      {isStop ? (
-        <>
-          <button onClick={handleStart}>Start</button>
-        </>
-      ) : (
-        <>
-          <button onClick={handleStop}>Stop</button>
-        </>
-      )}
-      {/* <button onClick={handleStop}>Stop</button>
-      <button onClick={handleStart}>Start</button> */}
+    <div className="">
+      <div className="bg-red-500">
+        <ShowTime
+          hours={hours}
+          milliseconds={milliseconds}
+          minutes={minutes}
+          seconds={seconds}
+        />
+        <button onClick={handleReset} disabled={!isStop}>
+          Reset
+        </button>
+        {isStop ? (
+          <>
+            <button onClick={handleStart}>Start</button>
+          </>
+        ) : (
+          <>
+            <button onClick={handleStop}>Stop</button>
+          </>
+        )}
+      </div>
     </div>
   );
 };

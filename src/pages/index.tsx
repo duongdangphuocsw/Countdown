@@ -131,7 +131,7 @@ export default function Countdown() {
   return (
     <div className="container">
       <header>
-        <h1 className="text-4xl my-10 font-extrabold font-serif">
+        <h1 className="text-red-500 text-4xl my-10 font-extrabold font-serif">
           Time countdown
         </h1>
       </header>
