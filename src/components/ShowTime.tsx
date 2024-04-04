@@ -14,10 +14,10 @@ const ShowTime = ({
   milliseconds,
 }: ShowTimeInterface) => {
   const TimeItem = ({ time }: { time: string }) => {
-    return <span className="text-3xl">{time || "00"}</span>;
+    return <span className="time-item">{time || "00"}</span>;
   };
   return (
-    <div className="bg-red-500">
+    <div className="showtime">
       <TimeItem time={hours || "00"} />
       <span> : </span>
       <TimeItem time={minutes || "00"} />

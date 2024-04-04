@@ -36,26 +36,32 @@ const Page = () => {
 
   const { hours, minutes, seconds, milliseconds } = formatedTime(secondsPassed);
   return (
-    <div className="">
-      <div className="bg-red-500">
+    <div className="stopwatch">
+      <div className="stopwatch-container container">
         <ShowTime
           hours={hours}
           milliseconds={milliseconds}
           minutes={minutes}
           seconds={seconds}
         />
-        <button onClick={handleReset} disabled={!isStop}>
-          Reset
-        </button>
-        {isStop ? (
-          <>
-            <button onClick={handleStart}>Start</button>
-          </>
-        ) : (
-          <>
-            <button onClick={handleStop}>Stop</button>
-          </>
-        )}
+        <div className="btn-container">
+          <button onClick={handleReset} disabled={!isStop} className="btn">
+            Reset
+          </button>
+          {isStop ? (
+            <>
+              <button onClick={handleStart} className="btn">
+                Start
+              </button>
+            </>
+          ) : (
+            <>
+              <button onClick={handleStop} className="btn">
+                Stop
+              </button>
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
