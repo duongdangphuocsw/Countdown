@@ -1,0 +1,9 @@
+.animation-white-to-black {
+    background-color: $myWhite !important;
+    color: $myBlack !important;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+        background-color: $myBlack !important;
+        color: $myWhite !important;
+    }
+}
